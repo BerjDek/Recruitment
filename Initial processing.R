@@ -14,7 +14,8 @@ data <- data %>%
                   Bundesland, LikelihoodParticipScience, LikelihoodRecommScience, FeelingScience, 
                   LikelihoodParticipProtect, LikelihoodRecommProtect, FeelingProtect, 
                   MorePersuasive, HeardCS, DescribeCS_en, ParticipCS, UsefulCS, Group  ), 
-                as.factor))
+                as.factor)) %>%
+  mutate(across(everything(), ~ ifelse(. == "", NA, .)))
 
 
 data <- data %>%

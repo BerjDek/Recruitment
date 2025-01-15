@@ -1,7 +1,8 @@
 #Initital upload
 
 library(tidyverse)
-
+library(knitr)
+library(kableExtra)
 
 data <- read.csv("results_all_clean.csv")
 
@@ -15,7 +16,12 @@ data <- data %>%
                   LikelihoodParticipProtect, LikelihoodRecommProtect, FeelingProtect, 
                   MorePersuasive, HeardCS, DescribeCS_en, ParticipCS, UsefulCS, Group  ), 
                 as.factor)) %>%
-  mutate(across(everything(), ~ ifelse(. == "", NA, .)))
+  mutate(Age_Group = case_when(
+    Age >= 18 & Age <= 25 ~ "18-25",
+    Age >= 26 & Age <= 44 ~ "26-44",
+    Age >= 45 & Age <= 60 ~ "45-60",
+    Age > 60 ~ "60+"
+  ))
 
 
 data <- data %>%
@@ -39,7 +45,7 @@ data_reduced <- data %>%
           -FeelingProtect_comment_de, -MotivatorsOther_de,
           -BarriersOther_de)
 
-summary(data_reduced)
+
 
 #Name Changes
 
@@ -88,6 +94,12 @@ data_reduced <- data_reduced %>%
     Barrier_Doesnt_Volunteer = B_Volunteering,
     Barrier_CS_Not_Credible = B_NotCredible
   )
+
+data_reduced <- data_reduced %>%
+  mutate(across(c(Gender, Education_Level, Neighborhood_Type, Participation_Likelihood_SciMsg,Recommend_Likelihood_SciMsg,
+                  Feelings_SciMsg, BuildingType, Participation_Likelihood_EnvMsg,Recommend_Likelihood_EnvMsg, Feelings_EnvMsg,
+                  More_Persuasive_Msg, Awareness_Of_CitizenScience,Participated_In_CitizenScience, CitizenScience_Usefulness), ~ na_if(., "")))
+
 
 
 summary(data_reduced)

@@ -201,6 +201,7 @@ comparison_plot(
 
 
 
+
 # Demographics ------------------------------------------------------------
 
 ## Gender ------------------------------------------------------------------
@@ -250,10 +251,36 @@ create_sorted_bar_chart(data_reduced, Bundesland, "State Distribution")
 
 
 
-# Impact of Msg on Participation Likelihood --------
+
+#Variables --------
+## Citizen Science Prior Participation-------------------------------------------------------------------
+create_sorted_bar_chart(data_reduced, Participated_In_CitizenScience, "Prior Participation in CS")
+
+#only 4.4% participated in citizen science.
+
+## Citizen Science Prior Awareness-------------------------------------------------------------------
+create_sorted_bar_chart(data_reduced, Awareness_Of_CitizenScience, "Prior Awareness of CS")
+
+# only 7.4% heard of citizen science.
+
+## Usefulness of Citizen Science -------------------------------------------------------------------
+create_sorted_bar_chart(data_reduced, CitizenScience_Usefulness, "Usefulness of CS")
+
+# 45% think its useful, only 12.2 think its not, the rest don't know.
 
 
-## Participating ------------------------------------------------------------
+
+
+## Group of First Read Message -------------------------------------------------------------------
+create_sorted_bar_chart(data_reduced, Group , "Which Message They Read First")
+
+# A bit more of the participants read the scientific message first (51.3%), don't know why there is an NA count here
+
+#  Participation Likelihood --------
+
+
+
+## Theme ------------------------------------------------------------
 
 
 comparison_plot(
@@ -263,13 +290,13 @@ comparison_plot(
   labels = c("Scientific", "Environmental"),    
   title = "Participation Likelihood by Message Theme",
   response_levels = c("Very likely", "Somewhat likely", "Neutral", "Somewhat unlikely", "Very unlikely"), 
-  show_totals = TRUE
+  show_totals = FALSE
 )
 
 # Around one third is neutral regardless of message, similar results mostly 
 
 
-##Combined Likely/Unlikely ------------------------------------------------
+## Combined Likely/Unlikely ------------------------------------------------
 
 comparison_plot(
   data = data_reduced,
@@ -285,11 +312,11 @@ comparison_plot(
     "Somewhat unlikely" = "Unlikely"
   ),
   include_na = FALSE,
-  show_totals = TRUE
+  show_totals = FALSE
 )
 
 
-## Participation By Gender -------------------------------------------------
+## By Gender -------------------------------------------------
 
 comparison_plot(
   data = data_reduced,
@@ -304,7 +331,30 @@ comparison_plot(
 )
 
 
-## Participation By Education -------------------------------------------------
+comparison_plot(
+  data = data_reduced,
+  col1 = "Participation_Likelihood_SciMsg",
+  col2 = "Participation_Likelihood_EnvMsg",
+  labels = c("Scientific", "Environmental"),
+  title = "Participation Likelihood by Message Theme And Gender, Combined Likley and Unlikely",
+  response_levels = c("Likely", "Unlikely"), 
+  combine_levels = list(
+    "Very likely" = "Likely",
+    "Somewhat likely" = "Likely",
+    "Very unlikely" = "Unlikely",
+    "Somewhat unlikely" = "Unlikely"
+  ),
+  facet_by = "Gender", 
+  facet_levels = list("Male", "Female"),
+  include_na = FALSE,
+  show_totals = FALSE
+)
+
+
+#Simplifying to likelihood, it seems in general males are more likely to participate, and both seem slightly more convinced by the scientifc message
+
+
+## By Age -------------------------------------------------
 
 comparison_plot(
   data = data_reduced,
@@ -313,8 +363,1072 @@ comparison_plot(
   labels = c("Scientific", "Environmental"),
   title = "Participation Likelihood by Message Theme And Age",
   response_levels = c("Very likely", "Somewhat likely", "Neutral", "Somewhat unlikely", "Very unlikely"), 
-  facet_by = "Education_Level",
-  facet_levels = list("A-levels", "Primary school", "Secondary school", "University (University/technical school)"),
+  facet_by = "Age_Group",
+  facet_levels = list("18-25", "26-44", "45-60", "60+"),
   include_na = FALSE,
-  show_totals = TRUE
 )
+
+
+comparison_plot(
+  data = data_reduced,
+  col1 = "Participation_Likelihood_SciMsg",
+  col2 = "Participation_Likelihood_EnvMsg",
+  labels = c("Scientific", "Environmental"),
+  title = "Participation Likelihood by Message Theme And Age, Combined Likley and Unlikely",
+  response_levels = c("Likely", "Unlikely"), 
+  combine_levels = list(
+    "Very likely" = "Likely",
+    "Somewhat likely" = "Likely",
+    "Very unlikely" = "Unlikely",
+    "Somewhat unlikely" = "Unlikely"
+  ),
+  facet_by = "Age_Group",
+  facet_levels = list("18-25", "26-44", "45-60", "60+"),
+  include_na = FALSE,
+  show_totals = FALSE
+)
+
+
+#Interestingly younger crowds are more likely to participate
+
+
+## By Education -------------------------------------------------
+
+comparison_plot(
+  data = data_reduced,
+  col1 = "Participation_Likelihood_SciMsg",
+  col2 = "Participation_Likelihood_EnvMsg",
+  labels = c("Scientific", "Environmental"),
+  title = "Participation Likelihood by Message Theme And Education",
+  response_levels = c("Very likely", "Somewhat likely", "Neutral", "Somewhat unlikely", "Very unlikely"), 
+  facet_by = "Education_Level",
+  facet_levels = list("A-levels", "Secondary school", "University (University/technical school)"),
+  include_na = FALSE,
+  show_totals = FALSE
+)
+
+
+comparison_plot(
+  data = data_reduced,
+  col1 = "Participation_Likelihood_SciMsg",
+  col2 = "Participation_Likelihood_EnvMsg",
+  labels = c("Scientific", "Environmental"),
+  title = "Participation Likelihood by Message Theme And Education",
+  response_levels = c("Likely", "Unlikely"), 
+  combine_levels = list(
+    "Very likely" = "Likely",
+    "Somewhat likely" = "Likely",
+    "Very unlikely" = "Unlikely",
+    "Somewhat unlikely" = "Unlikely"
+  ), 
+  facet_by = "Education_Level",
+  facet_levels = list("A-levels", "Secondary school", "University (University/technical school)"),
+  include_na = FALSE
+)
+
+
+# University students are way more likely to participate, with scientific message seemingly more effective to most
+
+## By Employment Status -------------------------------------------------
+summary(data_reduced)
+comparison_plot(
+  data = data_reduced,
+  col1 = "Participation_Likelihood_SciMsg",
+  col2 = "Participation_Likelihood_EnvMsg",
+  labels = c("Scientific", "Environmental"),
+  title = "Participation Likelihood by Message Theme And Employment Status",
+  response_levels = c("Very likely", "Somewhat likely", "Neutral", "Somewhat unlikely", "Very unlikely"), 
+  facet_by = "Employment_Status",
+  facet_levels = list("Employed", "Retired", 
+                      "Homemaker", "Student"),
+  include_na = FALSE,
+  show_totals = FALSE
+)
+
+
+comparison_plot(
+  data = data_reduced,
+  col1 = "Participation_Likelihood_SciMsg",
+  col2 = "Participation_Likelihood_EnvMsg",
+  labels = c("Scientific", "Environmental"),
+  title = "Participation Likelihood by Message Theme And Employment Status, combined neutral exluded",
+  response_levels = c("Likely", "Unlikely"), 
+  combine_levels = list(
+    "Very likely" = "Likely",
+    "Somewhat likely" = "Likely",
+    "Very unlikely" = "Unlikely",
+    "Somewhat unlikely" = "Unlikely"
+  ), 
+  facet_by = "Employment_Status",
+  facet_levels = list("Employed", "Retired", 
+                      "Homemaker", "Student"),
+  include_na = FALSE
+)
+
+
+# Surprisingly not a lot of traction from Retired folk (also students and homemakers), with those employed being the most likley
+
+## By Occupation -------------------------------------------------
+summary(data_reduced)
+comparison_plot(
+  data = data_reduced,
+  col1 = "Participation_Likelihood_SciMsg",
+  col2 = "Participation_Likelihood_EnvMsg",
+  labels = c("Scientific", "Environmental"),
+  title = "Participation Likelihood by Message Theme And Occupation",
+  response_levels = c("Very likely", "Somewhat likely", "Neutral", "Somewhat unlikely", "Very unlikely"), 
+  facet_by = "Occupation_Type",
+  facet_levels = list("Other (please specify)", "Business, Finance, or Management (e.g., Accountant, HR, Sales, Marketing)", 
+                      "Healthcare (e.g., Doctor, Nurse, Therapist)", "Information Technology (e.g., IT Support, Software Developer)", "Technical & Legal (e.g., Lawyer, Engineer, Governmental Worker)"),
+  include_na = FALSE,
+  show_totals = FALSE
+)
+
+
+comparison_plot(
+  data = data_reduced,
+  col1 = "Participation_Likelihood_SciMsg",
+  col2 = "Participation_Likelihood_EnvMsg",
+  labels = c("Scientific", "Environmental"),
+  title = "Participation Likelihood by Message Theme And Occupation",
+  response_levels = c("Likely", "Unlikely"), 
+  combine_levels = list(
+    "Very likely" = "Likely",
+    "Somewhat likely" = "Likely",
+    "Very unlikely" = "Unlikely",
+    "Somewhat unlikely" = "Unlikely"
+  ), 
+  facet_by = "Occupation_Type",
+  facet_levels = list("Other (please specify)", "Business, Finance, or Management (e.g., Accountant, HR, Sales, Marketing)", 
+                      "Healthcare (e.g., Doctor, Nurse, Therapist)", "Information Technology (e.g., IT Support, Software Developer)", "Technical & Legal (e.g., Lawyer, Engineer, Governmental Worker)"),
+  include_na = FALSE
+)
+
+
+# Those from information technology domain stand out as most likely to participate regardless of theme
+
+
+## By Neighborhood  -------------------------------------------------
+summary(data_reduced)
+comparison_plot(
+  data = data_reduced,
+  col1 = "Participation_Likelihood_SciMsg",
+  col2 = "Participation_Likelihood_EnvMsg",
+  labels = c("Scientific", "Environmental"),
+  title = "Participation Likelihood by Message Theme And Neighborhood Type",
+  response_levels = c("Very likely", "Somewhat likely", "Neutral", "Somewhat unlikely", "Very unlikely"), 
+  facet_by = "Neighborhood_Type",
+  facet_levels = list("Rural", "Suburban", 
+                      "Urban (city center)", "Other (please specify)"),
+  include_na = FALSE,
+  show_totals = FALSE
+)
+
+
+comparison_plot(
+  data = data_reduced,
+  col1 = "Participation_Likelihood_SciMsg",
+  col2 = "Participation_Likelihood_EnvMsg",
+  labels = c("Scientific", "Environmental"),
+  title = "Participation Likelihood by Message Theme And Neighborhood Type, combined neutral exluded",
+  response_levels = c("Likely", "Unlikely"), 
+  combine_levels = list(
+    "Very likely" = "Likely",
+    "Somewhat likely" = "Likely",
+    "Very unlikely" = "Unlikely",
+    "Somewhat unlikely" = "Unlikely"
+  ), 
+  facet_by = "Neighborhood_Type",
+  facet_levels = list("Rural", "Suburban", 
+                      "Urban (city center)", "Other (please specify)"),
+  include_na = FALSE
+)
+
+
+# Those more in cit center more likely to participate, those in the suburbs seem to prefer the environmental message more
+
+
+
+## By Building -------------------------------------------------
+summary(data_reduced)
+comparison_plot(
+  data = data_reduced,
+  col1 = "Participation_Likelihood_SciMsg",
+  col2 = "Participation_Likelihood_EnvMsg",
+  labels = c("Scientific", "Environmental"),
+  title = "Participation Likelihood by Message Theme And Building Type",
+  response_levels = c("Very likely", "Somewhat likely", "Neutral", "Somewhat unlikely", "Very unlikely"), 
+  facet_by = "BuildingType",
+  facet_levels = list("Apartment complex", "Detached single-family house", 
+                      "Multifamily house", "Other (please specify)"),
+  include_na = FALSE,
+  show_totals = FALSE
+)
+
+
+comparison_plot(
+  data = data_reduced,
+  col1 = "Participation_Likelihood_SciMsg",
+  col2 = "Participation_Likelihood_EnvMsg",
+  labels = c("Scientific", "Environmental"),
+  title = "Participation Likelihood by Message Theme And Building Type, combined neutral exluded",
+  response_levels = c("Likely", "Unlikely"), 
+  combine_levels = list(
+    "Very likely" = "Likely",
+    "Somewhat likely" = "Likely",
+    "Very unlikely" = "Unlikely",
+    "Somewhat unlikely" = "Unlikely"
+  ), 
+  facet_by = "BuildingType",
+  facet_levels = list("Apartment complex", "Detached single-family house", 
+                      "Multifamily house", "Other (please specify)"),
+  include_na = FALSE
+)
+
+
+
+## By Read First-------------------------------------------------
+summary(data_reduced)
+comparison_plot(
+  data = data_reduced,
+  col1 = "Participation_Likelihood_SciMsg",
+  col2 = "Participation_Likelihood_EnvMsg",
+  labels = c("Scientific", "Environmental"),
+  title = "Participation Likelihood by Message Theme And Read-First",
+  response_levels = c("Very likely", "Somewhat likely", "Neutral", "Somewhat unlikely", "Very unlikely"), 
+  facet_by = "Group",
+  facet_levels = list("SciMsgFirst", "EnvMsgFirst"),
+  include_na = FALSE,
+  show_totals = FALSE
+)
+
+
+comparison_plot(
+  data = data_reduced,
+  col1 = "Participation_Likelihood_SciMsg",
+  col2 = "Participation_Likelihood_EnvMsg",
+  labels = c("Scientific", "Environmental"),
+  title = "Participation Likelihood by Message Theme And Read-First, combined neutral exluded",
+  response_levels = c("Likely", "Unlikely"), 
+  combine_levels = list(
+    "Very likely" = "Likely",
+    "Somewhat likely" = "Likely",
+    "Very unlikely" = "Unlikely",
+    "Somewhat unlikely" = "Unlikely"
+  ), 
+  facet_by = "Group",
+  facet_levels = list("SciMsgFirst", "EnvMsgFirst"),
+  include_na = FALSE
+)
+
+# In general it seems getting the message first makes it more unlikely to participate in that type of project
+
+## By Usefulness-------------------------------------------------
+summary(data_reduced)
+comparison_plot(
+  data = data_reduced,
+  col1 = "Participation_Likelihood_SciMsg",
+  col2 = "Participation_Likelihood_EnvMsg",
+  labels = c("Scientific", "Environmental"),
+  title = "Participation Likelihood by Message Theme And Usefulness",
+  response_levels = c("Very likely", "Somewhat likely", "Neutral", "Somewhat unlikely", "Very unlikely"), 
+  facet_by = "CitizenScience_Usefulness",
+  facet_levels = list("Yes", "Not sure", "No"),
+  include_na = FALSE,
+  show_totals = FALSE
+)
+
+
+comparison_plot(
+  data = data_reduced,
+  col1 = "Participation_Likelihood_SciMsg",
+  col2 = "Participation_Likelihood_EnvMsg",
+  labels = c("Scientific", "Environmental"),
+  title = "Participation Likelihood by Message Theme And Usefulness, combined neutral exluded",
+  response_levels = c("Likely", "Unlikely"), 
+  combine_levels = list(
+    "Very likely" = "Likely",
+    "Somewhat likely" = "Likely",
+    "Very unlikely" = "Unlikely",
+    "Somewhat unlikely" = "Unlikely"
+  ), 
+  facet_by = "CitizenScience_Usefulness",
+  facet_levels = list("Yes", "Not sure", "No"),
+  include_na = FALSE
+)
+
+# As expected those who think CS is not useful or unsure of usefulness not likely to participate
+
+## By Awareness-------------------------------------------------
+
+comparison_plot(
+  data = data_reduced,
+  col1 = "Participation_Likelihood_SciMsg",
+  col2 = "Participation_Likelihood_EnvMsg",
+  labels = c("Scientific", "Environmental"),
+  title = "Participation Likelihood by Message Theme And Awareness",
+  response_levels = c("Very likely", "Somewhat likely", "Neutral", "Somewhat unlikely", "Very unlikely"), 
+  facet_by = "Awareness_Of_CitizenScience",
+  facet_levels = list("Yes", "Not sure", "No"),
+  include_na = FALSE,
+  show_totals = FALSE
+)
+
+comparison_plot(
+  data = data_reduced,
+  col1 = "Participation_Likelihood_SciMsg",
+  col2 = "Participation_Likelihood_EnvMsg",
+  labels = c("Scientific", "Environmental"),
+  title = "Participation Likelihood by Message Theme And Awareness, combined neutral exluded",
+  response_levels = c("Likely", "Unlikely"), 
+  combine_levels = list(
+    "Very likely" = "Likely",
+    "Somewhat likely" = "Likely",
+    "Very unlikely" = "Unlikely",
+    "Somewhat unlikely" = "Unlikely"
+  ), 
+  facet_by = "Awareness_Of_CitizenScience",
+  facet_levels = list("Yes", "Not sure", "No"),
+  include_na = FALSE
+)
+
+
+#The few that are aware are way more likely to participate, scientific message seems to have the edge in both cases
+
+
+## By Prior Participated-------------------------------------------------
+
+comparison_plot(
+  data = data_reduced,
+  col1 = "Participation_Likelihood_SciMsg",
+  col2 = "Participation_Likelihood_EnvMsg",
+  labels = c("Scientific", "Environmental"),
+  title = "Participation Likelihood by Message Theme And Prior participation",
+  response_levels = c("Very likely", "Somewhat likely", "Neutral", "Somewhat unlikely", "Very unlikely"), 
+  facet_by = "Participated_In_CitizenScience",
+  facet_levels = list("Yes", "Not sure", "No"),
+  include_na = FALSE,
+  show_totals = FALSE
+)
+
+comparison_plot(
+  data = data_reduced,
+  col1 = "Participation_Likelihood_SciMsg",
+  col2 = "Participation_Likelihood_EnvMsg",
+  labels = c("Scientific", "Environmental"),
+  title = "Participation Likelihood by Message Theme And Prior Participation, combined neutral exluded",
+  response_levels = c("Likely", "Unlikely"), 
+  combine_levels = list(
+    "Very likely" = "Likely",
+    "Somewhat likely" = "Likely",
+    "Very unlikely" = "Unlikely",
+    "Somewhat unlikely" = "Unlikely"
+  ), 
+  facet_by = "Participated_In_CitizenScience",
+  facet_levels = list("Yes", "Not sure", "No"),
+  include_na = FALSE
+)
+
+
+#Similar to awareness those that have previously participated in CS are way more likely to participate again,
+#scientific message seems to have the edge for those that participated before and scientific by a bit for those who havenet
+
+
+
+
+# Impact of Msg on Recommendation Likelihood --------
+summary(data_reduced)
+
+## General ------------------------------------------------------------
+
+
+comparison_plot(
+  data = data_reduced,
+  col1 = "Recommend_Likelihood_SciMsg",   
+  col2 = "Recommend_Likelihood_EnvMsg",
+  labels = c("Scientific", "Environmental"),    
+  title = "Recommendation Likelihood by Message Theme",
+  response_levels = c("Very likely", "Somewhat likely", "Neutral", "Somewhat unlikely", "Very unlikely"), 
+  show_totals = FALSE
+)
+
+# Again around one third is neutral and does not care about recommending regardless of message, 
+#unlike Recommendation, those very likely to recommend do so after reading the environmental message
+
+##Combined Likely/Unlikely ------------------------------------------------
+
+comparison_plot(
+  data = data_reduced,
+  col1 = "Recommend_Likelihood_SciMsg",
+  col2 = "Recommend_Likelihood_EnvMsg",
+  labels = c("Scientific", "Environmental"),
+  title = "Recommendation Likelihood by Message Theme, Combined Likley and Unlikely",
+  response_levels = c("Likely", "Unlikely"), 
+  combine_levels = list(
+    "Very likely" = "Likely",
+    "Somewhat likely" = "Likely",
+    "Very unlikely" = "Unlikely",
+    "Somewhat unlikely" = "Unlikely"
+  ),
+  include_na = FALSE,
+  show_totals = FALSE
+)
+
+
+## By Gender -------------------------------------------------
+
+comparison_plot(
+  data = data_reduced,
+  col1 = "Recommend_Likelihood_SciMsg",
+  col2 = "Recommend_Likelihood_EnvMsg",
+  labels = c("Scientific", "Environmental"),
+  title = "Recommendation Likelihood by Message Theme And Gender",
+  response_levels = c("Very likely", "Somewhat likely", "Neutral", "Somewhat unlikely", "Very unlikely"), 
+  facet_by = "Gender", 
+  facet_levels = list("Male", "Female"),
+  include_na = FALSE,
+)
+
+
+comparison_plot(
+  data = data_reduced,
+  col1 = "Recommend_Likelihood_SciMsg",
+  col2 = "Recommend_Likelihood_EnvMsg",
+  labels = c("Scientific", "Environmental"),
+  title = "Recommendation Likelihood by Message Theme And Gender, Combined Likley and Unlikely",
+  response_levels = c("Likely", "Unlikely"), 
+  combine_levels = list(
+    "Very likely" = "Likely",
+    "Somewhat likely" = "Likely",
+    "Very unlikely" = "Unlikely",
+    "Somewhat unlikely" = "Unlikely"
+  ),
+  facet_by = "Gender", 
+  facet_levels = list("Male", "Female"),
+  include_na = FALSE,
+  show_totals = FALSE
+)
+
+
+#Males are also more likely to recommend, and unlike participation both seem  more convinced by the Environmental message
+
+
+## By Age -------------------------------------------------
+
+comparison_plot(
+  data = data_reduced,
+  col1 = "Recommend_Likelihood_SciMsg",
+  col2 = "Recommend_Likelihood_EnvMsg",
+  labels = c("Scientific", "Environmental"),
+  title = "Recommendation Likelihood by Message Theme And Age",
+  response_levels = c("Very likely", "Somewhat likely", "Neutral", "Somewhat unlikely", "Very unlikely"), 
+  facet_by = "Age_Group",
+  facet_levels = list("18-25", "26-44", "45-60", "60+"),
+  include_na = FALSE,
+)
+
+
+comparison_plot(
+  data = data_reduced,
+  col1 = "Recommend_Likelihood_SciMsg",
+  col2 = "Recommend_Likelihood_EnvMsg",
+  labels = c("Scientific", "Environmental"),
+  title = "Recommendation Likelihood by Message Theme And Age, Combined Likley and Unlikely",
+  response_levels = c("Likely", "Unlikely"), 
+  combine_levels = list(
+    "Very likely" = "Likely",
+    "Somewhat likely" = "Likely",
+    "Very unlikely" = "Unlikely",
+    "Somewhat unlikely" = "Unlikely"
+  ),
+  facet_by = "Age_Group",
+  facet_levels = list("18-25", "26-44", "45-60", "60+"),
+  include_na = FALSE,
+  show_totals = FALSE
+)
+
+
+#The likelihood of recommending increases for older folk when compared to participating. Those younger than 25 more likley
+# to recommend after the scientific message, with older than 25 more inclined after environmental
+
+
+##  By Education -------------------------------------------------
+
+comparison_plot(
+  data = data_reduced,
+  col1 = "Recommend_Likelihood_SciMsg",
+  col2 = "Recommend_Likelihood_EnvMsg",
+  labels = c("Scientific", "Environmental"),
+  title = "Recommendation Likelihood by Message Theme And Education",
+  response_levels = c("Very likely", "Somewhat likely", "Neutral", "Somewhat unlikely", "Very unlikely"), 
+  facet_by = "Education_Level",
+  facet_levels = list("A-levels", "Secondary school", "University (University/technical school)"),
+  include_na = FALSE,
+  show_totals = FALSE
+)
+
+
+comparison_plot(
+  data = data_reduced,
+  col1 = "Recommend_Likelihood_SciMsg",
+  col2 = "Recommend_Likelihood_EnvMsg",
+  labels = c("Scientific", "Environmental"),
+  title = "Recommendation Likelihood by Message Theme And Education",
+  response_levels = c("Likely", "Unlikely"), 
+  combine_levels = list(
+    "Very likely" = "Likely",
+    "Somewhat likely" = "Likely",
+    "Very unlikely" = "Unlikely",
+    "Somewhat unlikely" = "Unlikely"
+  ), 
+  facet_by = "Education_Level",
+  facet_levels = list("A-levels", "Secondary school", "University (University/technical school)"),
+  include_na = FALSE
+)
+
+
+# University students are still more likely to recommend, with environmental message seemingly more effective to most
+
+## By Employment Status -------------------------------------------------
+summary(data_reduced)
+comparison_plot(
+  data = data_reduced,
+  col1 = "Recommend_Likelihood_SciMsg",
+  col2 = "Recommend_Likelihood_EnvMsg",
+  labels = c("Scientific", "Environmental"),
+  title = "Recommendation Likelihood by Message Theme And Employment Status",
+  response_levels = c("Very likely", "Somewhat likely", "Neutral", "Somewhat unlikely", "Very unlikely"), 
+  facet_by = "Employment_Status",
+  facet_levels = list("Employed", "Retired", 
+                      "Homemaker", "Student"),
+  include_na = FALSE,
+  show_totals = FALSE
+)
+
+
+comparison_plot(
+  data = data_reduced,
+  col1 = "Recommend_Likelihood_SciMsg",
+  col2 = "Recommend_Likelihood_EnvMsg",
+  labels = c("Scientific", "Environmental"),
+  title = "Recommendation Likelihood by Message Theme And Employment Status, combined neutral exluded",
+  response_levels = c("Likely", "Unlikely"), 
+  combine_levels = list(
+    "Very likely" = "Likely",
+    "Somewhat likely" = "Likely",
+    "Very unlikely" = "Unlikely",
+    "Somewhat unlikely" = "Unlikely"
+  ), 
+  facet_by = "Employment_Status",
+  facet_levels = list("Employed", "Retired", 
+                      "Homemaker", "Student"),
+  include_na = FALSE
+)
+
+
+# From Participation to recommendation, students switch being more likely to recommend than not, and contrary to others being more likley to do so after scientific message
+# those employed still being the most likely to recommend in after both them, but mote more for environmental, 
+# Retired folk are interesting, likely to recommend after environmental and unlikely after scientific.
+
+## By Occupation -------------------------------------------------
+summary(data_reduced)
+comparison_plot(
+  data = data_reduced,
+  col1 = "Recommend_Likelihood_SciMsg",
+  col2 = "Recommend_Likelihood_EnvMsg",
+  labels = c("Scientific", "Environmental"),
+  title = "Recommendation Likelihood by Message Theme And Occupation",
+  response_levels = c("Very likely", "Somewhat likely", "Neutral", "Somewhat unlikely", "Very unlikely"), 
+  facet_by = "Occupation_Type",
+  facet_levels = list("Other (please specify)", "Business, Finance, or Management (e.g., Accountant, HR, Sales, Marketing)", 
+                      "Healthcare (e.g., Doctor, Nurse, Therapist)", "Information Technology (e.g., IT Support, Software Developer)", "Technical & Legal (e.g., Lawyer, Engineer, Governmental Worker)"),
+  include_na = FALSE,
+  show_totals = FALSE
+)
+
+
+comparison_plot(
+  data = data_reduced,
+  col1 = "Recommend_Likelihood_SciMsg",
+  col2 = "Recommend_Likelihood_EnvMsg",
+  labels = c("Scientific", "Environmental"),
+  title = "Recommendation Likelihood by Message Theme And Occupation",
+  response_levels = c("Likely", "Unlikely"), 
+  combine_levels = list(
+    "Very likely" = "Likely",
+    "Somewhat likely" = "Likely",
+    "Very unlikely" = "Unlikely",
+    "Somewhat unlikely" = "Unlikely"
+  ), 
+  facet_by = "Occupation_Type",
+  facet_levels = list("Other (please specify)", "Business, Finance, or Management (e.g., Accountant, HR, Sales, Marketing)", 
+                      "Healthcare (e.g., Doctor, Nurse, Therapist)", "Information Technology (e.g., IT Support, Software Developer)", "Technical & Legal (e.g., Lawyer, Engineer, Governmental Worker)"),
+  include_na = FALSE
+)
+
+
+# Business technical and healthcare workers would only be likely to recommend after env message
+# those in Tech, still by far the highest for recommending, and unlike participation would do so after env message
+
+
+## By Neighborhood  -------------------------------------------------
+summary(data_reduced)
+comparison_plot(
+  data = data_reduced,
+  col1 = "Recommend_Likelihood_SciMsg",
+  col2 = "Recommend_Likelihood_EnvMsg",
+  labels = c("Scientific", "Environmental"),
+  title = "Recommendation Likelihood by Message Theme And Neighborhood Type",
+  response_levels = c("Very likely", "Somewhat likely", "Neutral", "Somewhat unlikely", "Very unlikely"), 
+  facet_by = "Neighborhood_Type",
+  facet_levels = list("Rural", "Suburban", 
+                      "Urban (city center)", "Other (please specify)"),
+  include_na = FALSE,
+  show_totals = FALSE
+)
+
+
+comparison_plot(
+  data = data_reduced,
+  col1 = "Recommend_Likelihood_SciMsg",
+  col2 = "Recommend_Likelihood_EnvMsg",
+  labels = c("Scientific", "Environmental"),
+  title = "Recommendation Likelihood by Message Theme And Neighborhood Type, combined neutral exluded",
+  response_levels = c("Likely", "Unlikely"), 
+  combine_levels = list(
+    "Very likely" = "Likely",
+    "Somewhat likely" = "Likely",
+    "Very unlikely" = "Unlikely",
+    "Somewhat unlikely" = "Unlikely"
+  ), 
+  facet_by = "Neighborhood_Type",
+  facet_levels = list("Rural", "Suburban", 
+                      "Urban (city center)", "Other (please specify)"),
+  include_na = FALSE
+)
+
+
+# Unlike for participation, regardless of neighborhood type, most would recommend after environmental message,
+#Those in rural areas wont after the scientific message.
+
+
+
+## By Building -------------------------------------------------
+summary(data_reduced)
+comparison_plot(
+  data = data_reduced,
+  col1 = "Recommend_Likelihood_SciMsg",
+  col2 = "Recommend_Likelihood_EnvMsg",
+  labels = c("Scientific", "Environmental"),
+  title = "Recommendation Likelihood by Message Theme And Building Type",
+  response_levels = c("Very likely", "Somewhat likely", "Neutral", "Somewhat unlikely", "Very unlikely"), 
+  facet_by = "BuildingType",
+  facet_levels = list("Apartment complex", "Detached single-family house", 
+                      "Multifamily house", "Other (please specify)"),
+  include_na = FALSE,
+  show_totals = FALSE
+)
+
+
+comparison_plot(
+  data = data_reduced,
+  col1 = "Recommend_Likelihood_SciMsg",
+  col2 = "Recommend_Likelihood_EnvMsg",
+  labels = c("Scientific", "Environmental"),
+  title = "Recommendation Likelihood by Message Theme And Building Type, combined neutral exluded",
+  response_levels = c("Likely", "Unlikely"), 
+  combine_levels = list(
+    "Very likely" = "Likely",
+    "Somewhat likely" = "Likely",
+    "Very unlikely" = "Unlikely",
+    "Somewhat unlikely" = "Unlikely"
+  ), 
+  facet_by = "BuildingType",
+  facet_levels = list("Apartment complex", "Detached single-family house", 
+                      "Multifamily house", "Other (please specify)"),
+  include_na = FALSE
+)
+
+
+# Those in detached homes most likely to and would recommend regardless of message theme, all others after environmental message only
+
+
+
+
+## By Read First-------------------------------------------------
+summary(data_reduced)
+comparison_plot(
+  data = data_reduced,
+  col1 = "Recommend_Likelihood_SciMsg",
+  col2 = "Recommend_Likelihood_EnvMsg",
+  labels = c("Scientific", "Environmental"),
+  title = "Recommendation Likelihood by Message Theme And Read-First",
+  response_levels = c("Very likely", "Somewhat likely", "Neutral", "Somewhat unlikely", "Very unlikely"), 
+  facet_by = "Group",
+  facet_levels = list("SciMsgFirst", "EnvMsgFirst"),
+  include_na = FALSE,
+  show_totals = FALSE
+)
+
+
+comparison_plot(
+  data = data_reduced,
+  col1 = "Recommend_Likelihood_SciMsg",
+  col2 = "Recommend_Likelihood_EnvMsg",
+  labels = c("Scientific", "Environmental"),
+  title = "Recommendation Likelihood by Message Theme And Read-First, combined neutral exluded",
+  response_levels = c("Likely", "Unlikely"), 
+  combine_levels = list(
+    "Very likely" = "Likely",
+    "Somewhat likely" = "Likely",
+    "Very unlikely" = "Unlikely",
+    "Somewhat unlikely" = "Unlikely"
+  ), 
+  facet_by = "Group",
+  facet_levels = list("SciMsgFirst", "EnvMsgFirst"),
+  include_na = FALSE
+)
+
+# Weirdly reading the Scientific Message first, makes it way more likely to recommend the Environmental Project,
+
+
+## By Usefulness-------------------------------------------------
+summary(data_reduced)
+comparison_plot(
+  data = data_reduced,
+  col1 = "Recommend_Likelihood_SciMsg",
+  col2 = "Recommend_Likelihood_EnvMsg",
+  labels = c("Scientific", "Environmental"),
+  title = "Recommendation Likelihood by Message Theme And Usefulness",
+  response_levels = c("Very likely", "Somewhat likely", "Neutral", "Somewhat unlikely", "Very unlikely"), 
+  facet_by = "CitizenScience_Usefulness",
+  facet_levels = list("Yes", "Not sure", "No"),
+  include_na = FALSE,
+  show_totals = FALSE
+)
+
+
+comparison_plot(
+  data = data_reduced,
+  col1 = "Recommend_Likelihood_SciMsg",
+  col2 = "Recommend_Likelihood_EnvMsg",
+  labels = c("Scientific", "Environmental"),
+  title = "Recommendation Likelihood by Message Theme And Usefulness, combined neutral exluded",
+  response_levels = c("Likely", "Unlikely"), 
+  combine_levels = list(
+    "Very likely" = "Likely",
+    "Somewhat likely" = "Likely",
+    "Very unlikely" = "Unlikely",
+    "Somewhat unlikely" = "Unlikely"
+  ), 
+  facet_by = "CitizenScience_Usefulness",
+  facet_levels = list("Yes", "Not sure", "No"),
+  include_na = FALSE
+)
+
+# Those unsure of CS usefulness are way more likely to recommend it after the environmental message
+
+## By Awareness-------------------------------------------------
+
+comparison_plot(
+  data = data_reduced,
+  col1 = "Recommend_Likelihood_SciMsg",
+  col2 = "Recommend_Likelihood_EnvMsg",
+  labels = c("Scientific", "Environmental"),
+  title = "Recommendation Likelihood by Message Theme And Awareness",
+  response_levels = c("Very likely", "Somewhat likely", "Neutral", "Somewhat unlikely", "Very unlikely"), 
+  facet_by = "Awareness_Of_CitizenScience",
+  facet_levels = list("Yes", "Not sure", "No"),
+  include_na = FALSE,
+  show_totals = FALSE
+)
+
+comparison_plot(
+  data = data_reduced,
+  col1 = "Recommend_Likelihood_SciMsg",
+  col2 = "Recommend_Likelihood_EnvMsg",
+  labels = c("Scientific", "Environmental"),
+  title = "Recommendation Likelihood by Message Theme And Awareness, combined neutral exluded",
+  response_levels = c("Likely", "Unlikely"), 
+  combine_levels = list(
+    "Very likely" = "Likely",
+    "Somewhat likely" = "Likely",
+    "Very unlikely" = "Unlikely",
+    "Somewhat unlikely" = "Unlikely"
+  ), 
+  facet_by = "Awareness_Of_CitizenScience",
+  facet_levels = list("Yes", "Not sure", "No"),
+  include_na = FALSE
+)
+
+
+#In all categories of awareness the environmental message makes it more likely to recommended
+
+## By Prior Participated-------------------------------------------------
+
+comparison_plot(
+  data = data_reduced,
+  col1 = "Recommend_Likelihood_SciMsg",
+  col2 = "Recommend_Likelihood_EnvMsg",
+  labels = c("Scientific", "Environmental"),
+  title = "Recommendation Likelihood by Message Theme And Prior participation",
+  response_levels = c("Very likely", "Somewhat likely", "Neutral", "Somewhat unlikely", "Very unlikely"), 
+  facet_by = "Participated_In_CitizenScience",
+  facet_levels = list("Yes", "Not sure", "No"),
+  include_na = FALSE,
+  show_totals = FALSE
+)
+
+comparison_plot(
+  data = data_reduced,
+  col1 = "Recommend_Likelihood_SciMsg",
+  col2 = "Recommend_Likelihood_EnvMsg",
+  labels = c("Scientific", "Environmental"),
+  title = "Recommendation Likelihood by Message Theme And Prior Participation, combined neutral exluded",
+  response_levels = c("Likely", "Unlikely"), 
+  combine_levels = list(
+    "Very likely" = "Likely",
+    "Somewhat likely" = "Likely",
+    "Very unlikely" = "Unlikely",
+    "Somewhat unlikely" = "Unlikely"
+  ), 
+  facet_by = "Participated_In_CitizenScience",
+  facet_levels = list("Yes", "Not sure", "No"),
+  include_na = FALSE
+)
+#For those who have participated as well, recommending is higher for environmental.
+
+# Impact of Msg on Feeling --------
+## General ------------------------------------------------------------
+
+
+comparison_plot(
+  data = data_reduced,
+  col1 = "Feelings_SciMsg",   
+  col2 = "Feelings_EnvMsg",
+  labels = c("Scientific", "Environmental"),    
+  title = "Feelings by Message Theme",
+  response_levels = c("Inspired", "Indifferent", "Obligated", "Other (please specify)"), 
+  show_totals = FALSE
+)
+
+# Again this time almost half (45 percent) are indifferent after reading the message, although messages 
+#seem more inspiring than obligating, both types of messages are identical in how they make people feel.
+#The other category should be checked for those that gave more detail.
+
+
+
+## By Gender -------------------------------------------------
+
+comparison_plot(
+  data = data_reduced,
+  col1 = "Feelings_SciMsg",
+  col2 = "Feelings_EnvMsg",
+  labels = c("Scientific", "Environmental"),
+  title = "Feelings by Message Theme And Gender",
+  response_levels = c("Inspired", "Indifferent", "Obligated"), 
+  facet_by = "Gender", 
+  facet_levels = list("Male", "Female"),
+  include_na = FALSE,
+)
+
+
+#Males generally feel more obligated than females, ad environmental messages seem more inspiring to them than 
+#females, who feel more inspired by scientific messages
+
+
+
+## By Age -------------------------------------------------
+
+comparison_plot(
+  data = data_reduced,
+  col1 = "Feelings_SciMsg",
+  col2 = "Feelings_EnvMsg",
+  labels = c("Scientific", "Environmental"),
+  title = "Feelings by Message Theme And Age",
+  response_levels = c("Inspired", "Indifferent", "Obligated"), 
+  facet_by = "Age_Group",
+  facet_levels = list("18-25", "26-44", "45-60", "60+"),
+  include_na = FALSE,
+)
+
+#Obligation seems to drop with age, highest level of indifference for those between 46-60, 26 to 44 most inspired
+
+## By Education -------------------------------------------------
+
+comparison_plot(
+  data = data_reduced,
+  col1 = "Feelings_SciMsg",
+  col2 = "Feelings_EnvMsg",
+  labels = c("Scientific", "Environmental"),
+  title = "Feelings by Message Theme And Education",
+  response_levels = c("Inspired", "Indifferent", "Obligated"), 
+  facet_by = "Education_Level",
+  facet_levels = list("A-levels", "Secondary school", "University (University/technical school)"),
+  include_na = FALSE,
+  show_totals = FALSE
+)
+
+
+# University students most inspired (more by environmental messages), secondary and a levels more inspired by scientific
+
+## By Employment Status -------------------------------------------------
+summary(data_reduced)
+comparison_plot(
+  data = data_reduced,
+  col1 = "Feelings_SciMsg",
+  col2 = "Feelings_EnvMsg",
+  labels = c("Scientific", "Environmental"),
+  title = "Feelings by Message Theme And Employment Status",
+  response_levels = c("Inspired", "Indifferent", "Obligated"), 
+  facet_by = "Employment_Status",
+  facet_levels = list("Employed", "Retired", 
+                      "Homemaker", "Student"),
+  include_na = FALSE,
+  show_totals = FALSE
+)
+
+
+# employment status seems not too likely to differentiate feelings.
+
+
+## By Occupation -------------------------------------------------
+summary(data_reduced)
+comparison_plot(
+  data = data_reduced,
+  col1 = "Feelings_SciMsg",
+  col2 = "Feelings_EnvMsg",
+  labels = c("Scientific", "Environmental"),
+  title = "Feelings by Message Theme And Occupation",
+  response_levels = c("Inspired", "Indifferent", "Obligated"), 
+  facet_by = "Occupation_Type",
+  facet_levels = list("Other (please specify)", "Business, Finance, or Management (e.g., Accountant, HR, Sales, Marketing)", 
+                      "Healthcare (e.g., Doctor, Nurse, Therapist)", "Information Technology (e.g., IT Support, Software Developer)", "Technical & Legal (e.g., Lawyer, Engineer, Governmental Worker)"),
+  include_na = FALSE,
+  show_totals = FALSE
+)
+
+#Healthcare workers feel the least obligated, generally scientific message more inspiring
+
+
+## By Neighborhood  -------------------------------------------------
+summary(data_reduced)
+comparison_plot(
+  data = data_reduced,
+  col1 = "Feelings_SciMsg",
+  col2 = "Feelings_EnvMsg",
+  labels = c("Scientific", "Environmental"),
+  title = "Feelings by Message Theme And Neighborhood Type",
+  response_levels = c("Inspired", "Indifferent", "Obligated"), 
+  facet_by = "Neighborhood_Type",
+  facet_levels = list("Rural", "Suburban", 
+                      "Urban (city center)", "Other (please specify)"),
+  include_na = FALSE,
+  show_totals = FALSE
+)
+
+
+
+
+# neighberhood doesnt seem to impact feeling much
+
+
+
+## By Building -------------------------------------------------
+summary(data_reduced)
+comparison_plot(
+  data = data_reduced,
+  col1 = "Feelings_SciMsg",
+  col2 = "Feelings_EnvMsg",
+  labels = c("Scientific", "Environmental"),
+  title = "Feelings by Message Theme And Building Type",
+  response_levels = c("Inspired", "Indifferent", "Obligated"), 
+  facet_by = "BuildingType",
+  facet_levels = list("Apartment complex", "Detached single-family house", 
+                      "Multifamily house", "Other (please specify)"),
+  include_na = FALSE,
+  show_totals = FALSE
+)
+
+#neither does building type
+
+
+## By Read First-------------------------------------------------
+summary(data_reduced)
+comparison_plot(
+  data = data_reduced,
+  col1 = "Feelings_SciMsg",
+  col2 = "Feelings_EnvMsg",
+  labels = c("Scientific", "Environmental"),
+  title = "Feelings by Message Theme And Read-First",
+  response_levels = c("Inspired", "Indifferent", "Obligated"), 
+  facet_by = "Group",
+  facet_levels = list("SciMsgFirst", "EnvMsgFirst"),
+  include_na = FALSE,
+  show_totals = FALSE
+)
+
+
+
+# Whichever message is read first is more inspiring, in general less indifferent rates when environmental message is read first
+
+
+## By Usefulness-------------------------------------------------
+summary(data_reduced)
+comparison_plot(
+  data = data_reduced,
+  col1 = "Feelings_SciMsg",
+  col2 = "Feelings_EnvMsg",
+  labels = c("Scientific", "Environmental"),
+  title = "Feelings by Message Theme And Usefulness",
+  response_levels = c("Inspired", "Indifferent", "Obligated"),
+  facet_by = "CitizenScience_Usefulness",
+  facet_levels = list("Yes", "Not sure", "No"),
+  include_na = FALSE,
+  show_totals = FALSE
+)
+
+
+# Those unsure of CS usefulness feel more obligated 
+
+## By Awareness-------------------------------------------------
+
+comparison_plot(
+  data = data_reduced,
+  col1 = "Feelings_SciMsg",
+  col2 = "Feelings_EnvMsg",
+  labels = c("Scientific", "Environmental"),
+  title = "Feelings by Message Theme And Awareness",
+  response_levels = c("Inspired", "Indifferent", "Obligated"),
+  facet_by = "Awareness_Of_CitizenScience",
+  facet_levels = list("Yes", "Not sure", "No"),
+  include_na = FALSE,
+  show_totals = FALSE
+)
+
+
+
+## By Prior Participated-------------------------------------------------
+
+comparison_plot(
+  data = data_reduced,
+  col1 = "Feelings_SciMsg",
+  col2 = "Feelings_EnvMsg",
+  labels = c("Scientific", "Environmental"),
+  title = "Feelings by Message Theme And Prior participation",
+  response_levels = c("Inspired", "Indifferent", "Obligated"), 
+  facet_by = "Participated_In_CitizenScience",
+  facet_levels = list("Yes", "Not sure", "No"),
+  include_na = FALSE,
+  show_totals = FALSE
+)
+
+
+#For those who have not participated scientific is a bit more inspiring, but for those who have not bit more obligating
+
+
+
+#repeat the codes above for number of participation
+#for the variables include one that is for which one they prefer when asked directly.
+#create a visualization for the motivation and barrier ratings.
+#create a plot for relation between motivation/barrier and 

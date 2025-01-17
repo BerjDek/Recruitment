@@ -9,20 +9,24 @@ data <- read.csv("results_all_clean.csv")
 summary(data)
 
 
+data <- data %>% mutate(Age_Group = case_when(
+  Age >= 18 & Age <= 25 ~ "18-25",
+  Age >= 26 & Age <= 44 ~ "26-44",
+  Age >= 45 & Age <= 60 ~ "45-60",
+  Age > 60 ~ "60+"
+))
+
+summary(data)
+
 data <- data %>%
-  mutate(across(c(startlanguage, startdate, datestamp, Consent, Gender, HighestEducation, 
+  mutate(across(c(startlanguage, startdate, datestamp, Consent, Gender, Age_Group, HighestEducation, 
                   EmploymentStatus, OccupationCategory, Neighborhood, BuildingType, 
                   Bundesland, LikelihoodParticipScience, LikelihoodRecommScience, FeelingScience, 
                   LikelihoodParticipProtect, LikelihoodRecommProtect, FeelingProtect, 
-                  MorePersuasive, HeardCS, DescribeCS_en, ParticipCS, UsefulCS, Group  ), 
-                as.factor)) %>%
-  mutate(Age_Group = case_when(
-    Age >= 18 & Age <= 25 ~ "18-25",
-    Age >= 26 & Age <= 44 ~ "26-44",
-    Age >= 45 & Age <= 60 ~ "45-60",
-    Age > 60 ~ "60+"
-  ))
+                  MorePersuasive, HeardCS, DescribeCS_en, ParticipCS, UsefulCS, Group, Participation_Frequency_SciMsg, Participation_Frequency_EnvMsg), 
+                as.factor)) 
 
+summary(data)
 
 data <- data %>%
   mutate(across(c(LikelihoodParticipScience, LikelihoodRecommScience, FeelingScience, 
@@ -94,6 +98,11 @@ data_reduced <- data_reduced %>%
     Barrier_Doesnt_Volunteer = B_Volunteering,
     Barrier_CS_Not_Credible = B_NotCredible
   )
+
+
+summary(data_reduced)
+
+
 
 data_reduced <- data_reduced %>%
   mutate(across(c(Gender, Education_Level, Neighborhood_Type, Participation_Likelihood_SciMsg,Recommend_Likelihood_SciMsg,

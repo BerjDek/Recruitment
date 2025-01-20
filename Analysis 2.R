@@ -199,7 +199,33 @@ comparison_plot(
   show_totals = TRUE
 )
 
+## Function to Run Mixed Effect Model ------------------------------------
 
+run_mixed_effect_model <- function(data, col1, col2, model_type, response_var, fixed_effects, random_effects) {
+  # Pivot the data longer
+  data_long <- data %>%
+    pivot_longer(
+      cols = all_of(c(col1, col2)),
+      names_to = "MessageTheme",
+      values_to = "Response"
+    )
+  
+  # Construct the formula for the model
+  fixed_effects_formula <- paste(fixed_effects, collapse = " + ")
+  random_effects_formula <- paste("(1|", random_effects, ")", collapse = "")
+  model_formula <- as.formula(paste(response_var, "~", fixed_effects_formula, "+", random_effects_formula))
+  
+  # Fit the model based on the specified type
+  if (model_type == "lmer") {
+    model <- lmer(model_formula, data = data_long)
+  } else if (model_type == "clmm") {
+    model <- clmm(model_formula, data = data_long)
+  } else {
+    stop("Unsupported model type. Use 'lmer' or 'clmm'.")
+  }
+  
+  return(summary(model))
+}
 
 
 # Demographics ------------------------------------------------------------
@@ -208,23 +234,29 @@ comparison_plot(
 
 create_sorted_bar_chart(data_reduced, Gender, "Gender Distribution")
 
+#53.4% of respondents were female and 46.2% Male
 
 ## Age Groups --------------------------------------------------------------
 
 
 create_sorted_bar_chart(data_reduced, Age_Group, "Age Distribution")
 
+#the Majority of participants were between the ages of 26 and 44 at 38.5%, followed by 45-60 being 30.9%, 20.6% of respondents were older than 60, and 10% between 18 and 25
 
 
 ## Education Level ---------------------------------------------------------
 
 create_sorted_bar_chart(data_reduced, Education_Level, "Education Level")
 
+#42% were Secondary school graduates, 31.9% University, 25% a-level
+
 
 ## Employment Status -------------------------------------------------------
 
 
 create_sorted_bar_chart(data_reduced, Employment_Status, "Employment Status Distribution")
+
+# two thirds of respondents were employed, 15% retired, 5.4% students, and 3.9% Homemakers
 
 ## Occupation Type ---------------------------------------------------------
 
@@ -236,11 +268,14 @@ create_sorted_bar_chart(data_reduced, Occupation_Type, "Occupation Type Distribu
 
 create_sorted_bar_chart(data_reduced, Neighborhood_Type, "Neighborhood Type Distribution")
 
+#there was almost equal distribution with neighborhood types, with 35.6% Suburban, 32.8% Rural, and 30.4% Urban
 
 ## Building Type -----------------------------------------------------------
 
 
 create_sorted_bar_chart(data_reduced, BuildingType, "Building Type Distribution")
+
+#half th building types were multifamily houses, 31.4% detached single houses, and 10.5 % apartments
 
 
 ## State -------------------------------------------------------------------
@@ -248,11 +283,16 @@ create_sorted_bar_chart(data_reduced, BuildingType, "Building Type Distribution"
 
 create_sorted_bar_chart(data_reduced, Bundesland, "State Distribution")
 
-
+# highest rate of respondents were from Rhine-Westphalia at 20.4 percent followed by Bavaria at 14.6%
 
 
 
 #Variables --------
+## Message Preference Directly Asked-------------------------------------------------------------------
+create_sorted_bar_chart(data_reduced, More_Persuasive_Msg, "Message Preference Directly Asked")
+
+# 33% thought both were equally persuasive, 25% neither, 22.2% for scientific, slightly higher than Env Protection Message.
+
 ## Citizen Science Prior Participation-------------------------------------------------------------------
 create_sorted_bar_chart(data_reduced, Participated_In_CitizenScience, "Prior Participation in CS")
 
@@ -280,7 +320,7 @@ create_sorted_bar_chart(data_reduced, Group , "Which Message They Read First")
 
 
 
-## Theme ------------------------------------------------------------
+## General ------------------------------------------------------------
 
 
 comparison_plot(
@@ -313,6 +353,23 @@ comparison_plot(
   ),
   include_na = FALSE,
   show_totals = FALSE
+)
+
+## t.test -------------------------------------------------
+t.test(data_numeric$Participation_Likelihood_SciMsg, 
+       data_numeric$Participation_Likelihood_EnvMsg, 
+       paired = TRUE)
+
+## Mixed.Model test -------------------------------------------------
+summary(data_numeric)
+run_mixed_effect_model(
+  data = data_numeric,
+  col1 = "Participation_Likelihood_SciMsg",     # Scientific message column
+  col2 = "Participation_Likelihood_EnvMsg",    # Environmental message column
+  model_type = "lmer",                      # Linear mixed-effects model
+  response_var = "Response",                # Response variable
+  fixed_effects = c("MessageTheme", "Gender", " Age_Group", "Barrier_Insufficient_Resources"), # Fixed effects
+  random_effects = "id"                     # Random effects
 )
 
 
@@ -736,8 +793,487 @@ comparison_plot(
 
 
 
-# Impact of Msg on Recommendation Likelihood --------
+
+#  Participation Frequency --------
+
+
+
+## Theme ------------------------------------------------------------
+
+
+comparison_plot(
+  data = data_reduced,
+  col1 = "Participation_Frequency_SciMsg",   
+  col2 = "Participation_Frequency_EnvMsg",
+  labels = c("Scientific", "Environmental"),    
+  title = "Participation Frequency by Message Theme",
+  response_levels = c("Daily", "Once per week", "Once per month", "Once or twice per year", "Never"), 
+  show_totals = FALSE
+)
+
+# Env Messaging seems to be encouraging more daily participation, while scientific more per week. 
+
+
+## Combined Likely/Unlikely ------------------------------------------------
+
+comparison_plot(
+  data = data_reduced,
+  col1 = "Participation_Frequency_SciMsg",
+  col2 = "Participation_Frequency_EnvMsg",
+  labels = c("Scientific", "Environmental"),
+  title = "Participation Frequency by Message Theme, Combined Likley and Unlikely",
+  response_levels = c("Will", "Will Not"), 
+  combine_levels = list(
+    "Daily"= "Will",
+    "Once per week" ="Will",
+    "Once per month"= "Will",
+    "Once or twice per year" = "Will",     
+    "Never" = "Will Not"
+  ),
+  include_na = FALSE,
+  show_totals = FALSE
+)
+
+#almost 75% will participate, similar rates after reading both Env and Sci message
+
+## By Gender -------------------------------------------------
+
+comparison_plot(
+  data = data_reduced,
+  col1 = "Participation_Frequency_SciMsg",
+  col2 = "Participation_Frequency_EnvMsg",
+  labels = c("Scientific", "Environmental"),
+  title = "Participation Frequency by Message Theme And Gender",
+  response_levels = c("Daily", "Once per week", "Once per month", "Once or twice per year", "Never"), 
+  facet_by = "Gender", 
+  facet_levels = list("Male", "Female"),
+  include_na = FALSE,
+)
+
+
+comparison_plot(
+  data = data_reduced,
+  col1 = "Participation_Frequency_SciMsg",
+  col2 = "Participation_Frequency_EnvMsg",
+  labels = c("Scientific", "Environmental"),
+  title = "Participation Frequency by Message Theme And Gender, Combined Likley and Unlikely",
+  response_levels = c("Will", "Will Not"), 
+  combine_levels = list(
+    "Daily"= "Will",
+    "Once per week" ="Will",
+    "Once per month"= "Will",
+    "Once or twice per year" = "Will",     
+    "Never" = "Will Not"
+  ),
+  facet_by = "Gender", 
+  facet_levels = list("Male", "Female"),
+  include_na = FALSE,
+  show_totals = FALSE
+)
+
+
+#Gender doesn't seem to have a major effect on promise to participate with Males having a slightly higher rate
+
+
+## By Age -------------------------------------------------
+
+comparison_plot(
+  data = data_reduced,
+  col1 = "Participation_Frequency_SciMsg",
+  col2 = "Participation_Frequency_EnvMsg",
+  labels = c("Scientific", "Environmental"),
+  title = "Participation Frequency by Message Theme And Age",
+  response_levels = c("Daily", "Once per week", "Once per month", "Once or twice per year", "Never"), 
+  facet_by = "Age_Group",
+  facet_levels = list("18-25", "26-44", "45-60", "60+"),
+  include_na = FALSE,
+)
+
+
+comparison_plot(
+  data = data_reduced,
+  col1 = "Participation_Frequency_SciMsg",
+  col2 = "Participation_Frequency_EnvMsg",
+  labels = c("Scientific", "Environmental"),
+  title = "Participation Frequency by Message Theme And Age, Combined Likley and Unlikely",
+  response_levels = c("Will", "Will Not"), 
+  combine_levels = list(
+    "Daily"= "Will",
+    "Once per week" ="Will",
+    "Once per month"= "Will",
+    "Once or twice per year" = "Will",
+    "Never" = "Will Not"
+  ),
+  facet_by = "Age_Group",
+  facet_levels = list("18-25", "26-44", "45-60", "60+"),
+  include_na = FALSE,
+  show_totals = FALSE
+)
+
+
+# 18-25 tend to prefer the env message for participation overall unlike the rest of the age groups
+
+
+## By Education -------------------------------------------------
+
+comparison_plot(
+  data = data_reduced,
+  col1 = "Participation_Frequency_SciMsg",
+  col2 = "Participation_Frequency_EnvMsg",
+  labels = c("Scientific", "Environmental"),
+  title = "Participation Frequency by Message Theme And Education",
+  response_levels = c("Daily", "Once per week", "Once per month", "Once or twice per year", "Never"), 
+  facet_by = "Education_Level",
+  facet_levels = list("A-levels", "Secondary school", "University (University/technical school)"),
+  include_na = FALSE,
+  show_totals = FALSE
+)
+
+
+comparison_plot(
+  data = data_reduced,
+  col1 = "Participation_Frequency_SciMsg",
+  col2 = "Participation_Frequency_EnvMsg",
+  labels = c("Scientific", "Environmental"),
+  title = "Participation Frequency by Message Theme And Education",
+  response_levels = c("Will", "Will Not"), 
+  combine_levels = list(
+    "Daily"= "Will",
+    "Once per week" ="Will",
+    "Once per month"= "Will",
+    "Once or twice per year" = "Will",
+    "Never" = "Will Not"
+  ), 
+  facet_by = "Education_Level",
+  facet_levels = list("A-levels", "Secondary school", "University (University/technical school)"),
+  include_na = FALSE
+)
+
+
+# By education Level all of them seem to prefer the scientific message for participation
+
+## By Employment Status -------------------------------------------------
 summary(data_reduced)
+comparison_plot(
+  data = data_reduced,
+  col1 = "Participation_Frequency_SciMsg",
+  col2 = "Participation_Frequency_EnvMsg",
+  labels = c("Scientific", "Environmental"),
+  title = "Participation Frequency by Message Theme And Employment Status",
+  response_levels = c("Daily", "Once per week", "Once per month", "Once or twice per year", "Never"), 
+  facet_by = "Employment_Status",
+  facet_levels = list("Employed", "Retired", 
+                      "Homemaker", "Student"),
+  include_na = FALSE,
+  show_totals = FALSE
+)
+
+
+comparison_plot(
+  data = data_reduced,
+  col1 = "Participation_Frequency_SciMsg",
+  col2 = "Participation_Frequency_EnvMsg",
+  labels = c("Scientific", "Environmental"),
+  title = "Participation Frequency by Message Theme And Employment Status, combined neutral exluded",
+  response_levels = c("Will", "Will Not"), 
+  combine_levels = list(
+    "Daily"= "Will",
+    "Once per week" ="Will",
+    "Once per month"= "Will",
+    "Once or twice per year" = "Will",     
+    "Never" = "Will Not"
+  ), 
+  facet_by = "Employment_Status",
+  facet_levels = list("Employed", "Retired", 
+                      "Homemaker", "Student"),
+  include_na = FALSE
+)
+
+
+# Again the highest rate of not participating comes from retirees and highest promise from students
+
+## By Occupation -------------------------------------------------
+summary(data_reduced)
+comparison_plot(
+  data = data_reduced,
+  col1 = "Participation_Frequency_SciMsg",
+  col2 = "Participation_Frequency_EnvMsg",
+  labels = c("Scientific", "Environmental"),
+  title = "Participation Frequency by Message Theme And Occupation",
+  response_levels = c("Daily", "Once per week", "Once per month", "Once or twice per year", "Never"), 
+  facet_by = "Occupation_Type",
+  facet_levels = list("Other (please specify)", "Business, Finance, or Management (e.g., Accountant, HR, Sales, Marketing)", 
+                      "Healthcare (e.g., Doctor, Nurse, Therapist)", "Information Technology (e.g., IT Support, Software Developer)", "Technical & Legal (e.g., Lawyer, Engineer, Governmental Worker)"),
+  include_na = FALSE,
+  show_totals = FALSE
+)
+
+
+comparison_plot(
+  data = data_reduced,
+  col1 = "Participation_Frequency_SciMsg",
+  col2 = "Participation_Frequency_EnvMsg",
+  labels = c("Scientific", "Environmental"),
+  title = "Participation Frequency by Message Theme And Occupation",
+  response_levels = c("Will", "Will Not"), 
+  combine_levels = list(
+    "Daily"= "Will",
+    "Once per week" ="Will",
+    "Once per month"= "Will",
+    "Once or twice per year" = "Will",
+    "Never" = "Will Not"
+  ), 
+  facet_by = "Occupation_Type",
+  facet_levels = list("Other (please specify)", "Business, Finance, or Management (e.g., Accountant, HR, Sales, Marketing)", 
+                      "Healthcare (e.g., Doctor, Nurse, Therapist)", "Information Technology (e.g., IT Support, Software Developer)", "Technical & Legal (e.g., Lawyer, Engineer, Governmental Worker)"),
+  include_na = FALSE
+)
+
+
+# Again the Those working in tech have the highest rates fro promising participation. most except from laywers and engeneers prefer the scientific message to promis participation
+
+
+## By Neighborhood  -------------------------------------------------
+summary(data_reduced)
+comparison_plot(
+  data = data_reduced,
+  col1 = "Participation_Frequency_SciMsg",
+  col2 = "Participation_Frequency_EnvMsg",
+  labels = c("Scientific", "Environmental"),
+  title = "Participation Frequency by Message Theme And Neighborhood Type",
+  response_levels = c("Daily", "Once per week", "Once per month", "Once or twice per year", "Never"), 
+  facet_by = "Neighborhood_Type",
+  facet_levels = list("Rural", "Suburban", 
+                      "Urban (city center)", "Other (please specify)"),
+  include_na = FALSE,
+  show_totals = FALSE
+)
+
+
+comparison_plot(
+  data = data_reduced,
+  col1 = "Participation_Frequency_SciMsg",
+  col2 = "Participation_Frequency_EnvMsg",
+  labels = c("Scientific", "Environmental"),
+  title = "Participation Frequency by Message Theme And Neighborhood Type, combined neutral exluded",
+  response_levels = c("Will", "Will Not"), 
+  combine_levels = list(
+    "Daily"= "Will",
+    "Once per week" ="Will",
+    "Once per month"= "Will",
+    "Once or twice per year" = "Will",
+    "Never" = "Will Not"
+  ), 
+  facet_by = "Neighborhood_Type",
+  facet_levels = list("Rural", "Suburban", 
+                      "Urban (city center)", "Other (please specify)"),
+  include_na = FALSE
+)
+
+
+# Lowest rate of promise comes from rural folk, impact of scinetfic and environemnal seems equal for all
+
+
+
+
+## By Building -------------------------------------------------
+summary(data_reduced)
+comparison_plot(
+  data = data_reduced,
+  col1 = "Participation_Frequency_SciMsg",
+  col2 = "Participation_Frequency_EnvMsg",
+  labels = c("Scientific", "Environmental"),
+  title = "Participation Frequency by Message Theme And Building Type",
+  response_levels = c("Daily", "Once per week", "Once per month", "Once or twice per year", "Never"), 
+  facet_by = "BuildingType",
+  facet_levels = list("Apartment complex", "Detached single-family house", 
+                      "Multifamily house", "Other (please specify)"),
+  include_na = FALSE,
+  show_totals = FALSE
+)
+
+
+comparison_plot(
+  data = data_reduced,
+  col1 = "Participation_Frequency_SciMsg",
+  col2 = "Participation_Frequency_EnvMsg",
+  labels = c("Scientific", "Environmental"),
+  title = "Participation Frequency by Message Theme And Building Type, combined neutral exluded",
+  response_levels = c("Will", "Will Not"), 
+  combine_levels = list(
+    "Daily"= "Will",
+    "Once per week" ="Will",
+    "Once per month"= "Will",
+    "Once or twice per year" = "Will",
+    "Never" = "Will Not"
+  ), 
+  facet_by = "BuildingType",
+  facet_levels = list("Apartment complex", "Detached single-family house", 
+                      "Multifamily house", "Other (please specify)"),
+  include_na = FALSE
+)
+
+# building type doesnt matter much
+
+## By Read First-------------------------------------------------
+summary(data_reduced)
+comparison_plot(
+  data = data_reduced,
+  col1 = "Participation_Frequency_SciMsg",
+  col2 = "Participation_Frequency_EnvMsg",
+  labels = c("Scientific", "Environmental"),
+  title = "Participation Frequency by Message Theme And Read-First",
+  response_levels = c("Daily", "Once per week", "Once per month", "Once or twice per year", "Never"), 
+  facet_by = "Group",
+  facet_levels = list("SciMsgFirst", "EnvMsgFirst"),
+  include_na = FALSE,
+  show_totals = FALSE
+)
+
+
+comparison_plot(
+  data = data_reduced,
+  col1 = "Participation_Frequency_SciMsg",
+  col2 = "Participation_Frequency_EnvMsg",
+  labels = c("Scientific", "Environmental"),
+  title = "Participation Frequency by Message Theme And Read-First, combined neutral exluded",
+  response_levels = c("Will", "Will Not"), 
+  combine_levels = list(
+    "Daily"= "Will",
+    "Once per week" ="Will",
+    "Once per month"= "Will",
+    "Once or twice per year" = "Will",
+    "Never" = "Will Not"
+  ), 
+  facet_by = "Group",
+  facet_levels = list("SciMsgFirst", "EnvMsgFirst"),
+  include_na = FALSE
+)
+
+# unlike what we saw for the participation likely-hood, in frquency of participation, at least for scientific messages getting teh message first makes it more
+# likely for individuals to promise that they would participate in the project, those getting env message first also promise higher rate for 
+#participating frequency  for env project but the difference is small
+
+## By Usefulness-------------------------------------------------
+summary(data_reduced)
+comparison_plot(
+  data = data_reduced,
+  col1 = "Participation_Frequency_SciMsg",
+  col2 = "Participation_Frequency_EnvMsg",
+  labels = c("Scientific", "Environmental"),
+  title = "Participation Frequency by Message Theme And Usefulness",
+  response_levels = c("Daily", "Once per week", "Once per month", "Once or twice per year", "Never"), 
+  facet_by = "CitizenScience_Usefulness",
+  facet_levels = list("Yes", "Not sure", "No"),
+  include_na = FALSE,
+  show_totals = FALSE
+)
+
+
+comparison_plot(
+  data = data_reduced,
+  col1 = "Participation_Frequency_SciMsg",
+  col2 = "Participation_Frequency_EnvMsg",
+  labels = c("Scientific", "Environmental"),
+  title = "Participation Frequency by Message Theme And Usefulness, combined neutral exluded",
+  response_levels = c("Will", "Will Not"), 
+  combine_levels = list(
+    "Daily"= "Will",
+    "Once per week" ="Will",
+    "Once per month"= "Will",
+    "Once or twice per year" = "Will",
+    "Never" = "Will Not"
+  ), 
+  facet_by = "CitizenScience_Usefulness",
+  facet_levels = list("Yes", "Not sure", "No"),
+  include_na = FALSE
+)
+
+# As expected those who think CS is useful have a higher rate of promising participation, interestingly those not sure
+# of the use of CS promise almost equal amount of participation when it approaches the once per month or once or twice per year groups.
+# this can be promising for an approach requiring "only" few participation from the general population.
+
+## By Awareness-------------------------------------------------
+
+comparison_plot(
+  data = data_reduced,
+  col1 = "Participation_Frequency_SciMsg",
+  col2 = "Participation_Frequency_EnvMsg",
+  labels = c("Scientific", "Environmental"),
+  title = "Participation Frequency by Message Theme And Awareness",
+  response_levels = c("Daily", "Once per week", "Once per month", "Once or twice per year", "Never"), 
+  facet_by = "Awareness_Of_CitizenScience",
+  facet_levels = list("Yes", "Not sure", "No"),
+  include_na = FALSE,
+  show_totals = FALSE
+)
+
+comparison_plot(
+  data = data_reduced,
+  col1 = "Participation_Frequency_SciMsg",
+  col2 = "Participation_Frequency_EnvMsg",
+  labels = c("Scientific", "Environmental"),
+  title = "Participation Frequency by Message Theme And Awareness, combined neutral exluded",
+  response_levels = c("Will", "Will Not"), 
+  combine_levels = list(
+    "Daily"= "Will",
+    "Once per week" ="Will",
+    "Once per month"= "Will",
+    "Once or twice per year" = "Will",
+    "Never" = "Will Not"
+  ), 
+  facet_by = "Awareness_Of_CitizenScience",
+  facet_levels = list("Yes", "Not sure", "No"),
+  include_na = FALSE
+)
+
+
+#The few that are aware are way more likely to promise to participate, scientific message seems to have the edge for those not sure 
+
+
+## By Prior Participated-------------------------------------------------
+
+comparison_plot(
+  data = data_reduced,
+  col1 = "Participation_Frequency_SciMsg",
+  col2 = "Participation_Frequency_EnvMsg",
+  labels = c("Scientific", "Environmental"),
+  title = "Participation Frequency by Message Theme And Prior participation",
+  response_levels = c("Daily", "Once per week", "Once per month", "Once or twice per year", "Never"), 
+  facet_by = "Participated_In_CitizenScience",
+  facet_levels = list("Yes", "Not sure", "No"),
+  include_na = FALSE,
+  show_totals = FALSE
+)
+
+comparison_plot(
+  data = data_reduced,
+  col1 = "Participation_Frequency_SciMsg",
+  col2 = "Participation_Frequency_EnvMsg",
+  labels = c("Scientific", "Environmental"),
+  title = "Participation Frequency by Message Theme And Prior Participation, combined neutral exluded",
+  response_levels = c("Will", "Will Not"), 
+  combine_levels = list(
+    "Daily"= "Will",
+    "Once per week" ="Will",
+    "Once per month"= "Will",
+    "Once or twice per year" = "Will", 
+    "Never" = "Will Not"
+  ), 
+  facet_by = "Participated_In_CitizenScience",
+  facet_levels = list("Yes", "Not sure", "No"),
+  include_na = FALSE
+)
+
+
+#Similar to awareness those that have previously participated in CS are way more likely to participate again, and more frequently.
+
+
+
+
+
+# Impact of Msg on Recommendation Likelihood --------
+
 
 ## General ------------------------------------------------------------
 
@@ -1428,7 +1964,6 @@ comparison_plot(
 
 
 
-#repeat the codes above for number of participation
-#for the variables include one that is for which one they prefer when asked directly.
+
 #create a visualization for the motivation and barrier ratings.
 #create a plot for relation between motivation/barrier and 

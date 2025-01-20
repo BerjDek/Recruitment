@@ -1,8 +1,11 @@
-#Initital upload
+#Initial upload
 
 library(tidyverse)
 library(knitr)
 library(kableExtra)
+library(Matrix)
+library(lme4)
+
 
 data <- read.csv("results_all_clean.csv")
 
@@ -23,7 +26,7 @@ data <- data %>%
                   EmploymentStatus, OccupationCategory, Neighborhood, BuildingType, 
                   Bundesland, LikelihoodParticipScience, LikelihoodRecommScience, FeelingScience, 
                   LikelihoodParticipProtect, LikelihoodRecommProtect, FeelingProtect, 
-                  MorePersuasive, HeardCS, DescribeCS_en, ParticipCS, UsefulCS, Group, Participation_Frequency_SciMsg, Participation_Frequency_EnvMsg), 
+                  MorePersuasive, HeardCS, DescribeCS_en, ParticipCS, UsefulCS, Group, FreqParticipScience, FreqParticipProtect), 
                 as.factor)) 
 
 summary(data)
@@ -77,17 +80,17 @@ data_reduced <- data_reduced %>%
     Understanding_Of_CitizenScience = DescribeCS_en,
     Participated_In_CitizenScience = ParticipCS,
     CitizenScience_Usefulness = UsefulCS,
-    Motivation_TopicInterest = M_TopicInteresting,
-    Motivation_NewExperience = M_New,
+    Motivation_Topic_Interest = M_TopicInteresting,
+    Motivation_New_Experience = M_New,
     Motivation_Enjoyable = M_Enjoyable,
-    Motivation_ShareAchievements = M_ShareWithOthers,
-    Motivation_FriendsFamily = M_FriendsFamily,
-    Motivation_ImproveCommunity = M_ImproveCommunity,
-    Motivation_ProtectEnvironment = M_ProtectEnviro,
-    Motivation_MeetVolunteers = M_MeetVolunteers,
-    Motivation_ScientificResearch = M_ScientificResearch,
-    Motivation_TeachOthers = M_TeachOthers,
-    Motivation_ReduceRisks = M_ReduceRisks,
+    Motivation_Share_Achievements = M_ShareWithOthers,
+    Motivation_Join_Friends_Family = M_FriendsFamily,
+    Motivation_Improve_Community = M_ImproveCommunity,
+    Motivation_Protect_Environment = M_ProtectEnviro,
+    Motivation_Meet_Other_Volunteers = M_MeetVolunteers,
+    Motivation_Scientific_Research = M_ScientificResearch,
+    Motivation_Teach_Others = M_TeachOthers,
+    Motivation_Reduce_Risks = M_ReduceRisks,
     Barrier_Lack_Of_Time = B_Time,
     Barrier_Unaware_Of_Projects = B_UnawareProjects,
     Barrier_Not_Interested = B_NotInterested,
@@ -114,6 +117,31 @@ data_reduced <- data_reduced %>%
 summary(data_reduced)
 
 write.csv(data_reduced, "data_reduced.csv", row.names = FALSE)
+
+
+
+
+data_numeric <- data_reduced %>% 
+  mutate(
+    Participation_Likelihood_EnvMsg = as.numeric(factor(Participation_Likelihood_EnvMsg, 
+                                                        levels = c("Very unlikely", "Somewhat unlikely", "Neutral", "Somewhat likely", "Very likely"), 
+                                                        labels = 1:5)),
+    Participation_Likelihood_SciMsg = as.numeric(factor(Participation_Likelihood_SciMsg , 
+                                levels = c("Very unlikely", "Somewhat unlikely", "Neutral", "Somewhat likely", "Very likely"), 
+                                labels = 1:5)),
+    Recommend_Likelihood_SciMsg     = as.numeric(factor(Recommend_Likelihood_SciMsg                , 
+                                levels = c("Very unlikely", "Somewhat unlikely", "Neutral", "Somewhat likely", "Very likely"), 
+                                labels = 1:5)),
+    Recommend_Likelihood_EnvMsg     = as.numeric(factor(Recommend_Likelihood_EnvMsg                , 
+                                                        levels = c("Very unlikely", "Somewhat unlikely", "Neutral", "Somewhat likely", "Very likely"), 
+                                                        labels = 1:5)),
+    Participation_Frequency_SciMsg      = as.numeric(factor(Participation_Frequency_SciMsg                 , 
+                                                        levels = c("Daily", "Once per week", "Once per month", "Once or twice per year", "Never"), 
+                                                        labels = 1:5)),
+    Participation_Frequency_EnvMsg      = as.numeric(factor(Participation_Frequency_EnvMsg                 , 
+                                                            levels = c("Daily", "Once per week", "Once per month", "Once or twice per year", "Never"), 
+                                                            labels = 1:5))
+  )
 
 
 #General Results on which message makes people more likely to
